@@ -54,7 +54,9 @@ class PhotoAlbum:
 
     def create_category(self, category_name):
         """创建自定义的照片类别"""
-        if category_name not in self.categories:
+        if category_name == '':
+            print("照片类别名不能为空")
+        elif category_name not in self.categories:
             self.categories[category_name] = []
             print(f"成功创建照片类别: {category_name}")
         else:
@@ -128,52 +130,53 @@ class PhotoAlbum:
 # 交互式演示
 photo_album = PhotoAlbum()
 
-while True:
-    print("\n请选择操作:")
-    print("1. 创建照片类别")
-    print("2. 添加照片")
-    print("3. 移除照片")
-    print("4. 更改照片类别")
-    print("5. 列出所有照片")
-    print("6. 查看照片")
-    print("7. 退出")
+if __name__ == "__main__":
+    while True:
+        print("\n请选择操作:")
+        print("1. 创建照片类别")
+        print("2. 添加照片")
+        print("3. 移除照片")
+        print("4. 更改照片类别")
+        print("5. 列出所有照片")
+        print("6. 查看照片")
+        print("7. 退出")
 
-    photo_album.load_data()
+        photo_album.load_data()
 
-    choice = input("输入数字选择操作: ")
+        choice = input("输入数字选择操作: ")
 
-    if choice == "1":
-        category_name = input("输入新的照片类别名称: ")
-        photo_album.create_category(category_name)
-        photo_album.save_data()
-    elif choice == "2":
-        photo_path = input("输入照片路径: ")
-        category = input("输入照片类别: ")
-        caption = input("输入照片说明(可选): ")
-        photo = Photo(photo_path, category, caption)
-        photo_album.add_photo(photo)
-        photo_album.save_data()
-    elif choice == "3":
-        category_name = input("输入照片所在类别: ")
-        photo_path = input("输入要移除的照片路径: ")
-        photo_album.remove_photo(category_name, photo_path)
-        photo_album.save_data()
-    elif choice == "4":
-        old_category = input("输入照片原所在类别: ")
-        new_category = input("输入照片要移动到的新类别: ")
-        photo_path = input("输入要移动的照片路径: ")
-        photo_album.change_category(old_category, new_category, photo_path)
-        photo_album.save_data()
-    elif choice == "5":
-        category_name = input("输入要列出的类别(留空显示所有类别): ")
-        photo_album.list_photos(category_name)
-    elif choice == "6":
-        category_name = input("输入照片所在类别: ")
-        photo_path = input("输入要查看的照片路径: ")
-        photo_album.view_photo(category_name, photo_path)
-    elif choice == "7":
-        photo_album.save_data()
-        print("再见!")
-        break
-    else:
-        print("无效的选择,请重试。")
+        if choice == "1":
+            category_name = input("输入新的照片类别名称: ")
+            photo_album.create_category(category_name)
+            photo_album.save_data()
+        elif choice == "2":
+            photo_path = input("输入照片路径: ")
+            category = input("输入照片类别: ")
+            caption = input("输入照片说明(可选): ")
+            photo = Photo(photo_path, category, caption)
+            photo_album.add_photo(photo)
+            photo_album.save_data()
+        elif choice == "3":
+            category_name = input("输入照片所在类别: ")
+            photo_path = input("输入要移除的照片路径: ")
+            photo_album.remove_photo(category_name, photo_path)
+            photo_album.save_data()
+        elif choice == "4":
+            old_category = input("输入照片原所在类别: ")
+            new_category = input("输入照片要移动到的新类别: ")
+            photo_path = input("输入要移动的照片路径: ")
+            photo_album.change_category(old_category, new_category, photo_path)
+            photo_album.save_data()
+        elif choice == "5":
+            category_name = input("输入要列出的类别(留空显示所有类别): ")
+            photo_album.list_photos(category_name)
+        elif choice == "6":
+            category_name = input("输入照片所在类别: ")
+            photo_path = input("输入要查看的照片路径: ")
+            photo_album.view_photo(category_name, photo_path)
+        elif choice == "7":
+            photo_album.save_data()
+            print("再见!")
+            break
+        else:
+            print("无效的选择,请重试。")
