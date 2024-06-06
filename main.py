@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import webbrowser
+import json
 class Photo:
     def __init__(self, path, category, caption=None):
         self.path = path
@@ -11,9 +12,45 @@ class Photo:
     def __str__(self):
         return f"Photo: {self.path} | Category: {self.category} | Caption: {self.caption} | Uploaded: {self.upload_time}"
 
+    def to_dict(self):
+        """将 Photo 对象转换为字典,以便 JSON 序列化"""
+        return {
+            "path": self.path,
+            "category": self.category,
+            "caption": self.caption,
+            "upload_time": self.upload_time
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """从字典中创建 Photo 对象,用于 JSON 反序列化"""
+        return cls(
+            data["path"],
+            data["category"],
+            data["caption"]
+        )
 class PhotoAlbum:
     def __init__(self):
         self.categories = {}
+
+    def load_data(self):
+        """从JSON文件加载数据"""
+        if os.path.exists("photo_album.json"):
+            with open("photo_album.json", "r") as file:
+                data = json.load(file)
+                self.categories = {
+                    category: [Photo.from_dict(photo_dict) for photo_dict in photos]
+                    for category, photos in data.items()
+                }
+
+    def save_data(self):
+        """将数据保存到JSON文件"""
+        data = {
+            category: [photo.to_dict() for photo in photos]
+            for category, photos in self.categories.items()
+        }
+        with open("photo_album.json", "w") as file:
+            json.dump(data, file, indent=4)
 
     def create_category(self, category_name):
         """创建自定义的照片类别"""
@@ -101,26 +138,32 @@ while True:
     print("6. 查看照片")
     print("7. 退出")
 
+    photo_album.load_data()
+
     choice = input("输入数字选择操作: ")
 
     if choice == "1":
         category_name = input("输入新的照片类别名称: ")
         photo_album.create_category(category_name)
+        photo_album.save_data()
     elif choice == "2":
         photo_path = input("输入照片路径: ")
         category = input("输入照片类别: ")
         caption = input("输入照片说明(可选): ")
         photo = Photo(photo_path, category, caption)
         photo_album.add_photo(photo)
+        photo_album.save_data()
     elif choice == "3":
         category_name = input("输入照片所在类别: ")
         photo_path = input("输入要移除的照片路径: ")
         photo_album.remove_photo(category_name, photo_path)
+        photo_album.save_data()
     elif choice == "4":
         old_category = input("输入照片原所在类别: ")
         new_category = input("输入照片要移动到的新类别: ")
         photo_path = input("输入要移动的照片路径: ")
         photo_album.change_category(old_category, new_category, photo_path)
+        photo_album.save_data()
     elif choice == "5":
         category_name = input("输入要列出的类别(留空显示所有类别): ")
         photo_album.list_photos(category_name)
@@ -129,6 +172,7 @@ while True:
         photo_path = input("输入要查看的照片路径: ")
         photo_album.view_photo(category_name, photo_path)
     elif choice == "7":
+        photo_album.save_data()
         print("再见!")
         break
     else:
