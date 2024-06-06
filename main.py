@@ -62,6 +62,16 @@ class PhotoAlbum:
         else:
             print(f"照片类别 {category_name} 已经存在.")
 
+    def remove_category(self, category_name):
+        """移除选中照片类别"""
+        if category_name == '':
+            print("照片类别不能为空")
+        elif category_name in self.categories:
+            del self.categories[category_name]
+            print(f"成功删除照片类别：{category_name}")
+        else:
+            print(f"照片类别{category_name}不存在。")
+
     def add_photo(self, photo):
         """将照片添加到指定类别"""
         category = photo.category
@@ -71,30 +81,30 @@ class PhotoAlbum:
         else:
             print(f"照片类别 {category} 不存在.")
 
-    def remove_photo(self, category_name, photo_path):
+    def remove_photo(self, category_name, photo_caption):
         """从指定类别中移除照片"""
         if category_name in self.categories:
             photos = self.categories[category_name]
             for photo in photos:
-                if photo.path == photo_path:
+                if photo.caption == photo_caption:
                     photos.remove(photo)
-                    print(f"照片 {photo_path} 已从类别 {category_name} 中移除")
+                    print(f"照片 {photo_caption} 已从类别 {category_name} 中移除")
                     return
-            print(f"类别 {category_name} 中不存在照片 {photo_path}")
+            print(f"类别 {category_name} 中不存在照片 {photo_caption}")
         else:
             print(f"照片类别 {category_name} 不存在.")
 
-    def change_category(self, old_category, new_category, photo_path):
+    def change_category(self, old_category, new_category, photo_caption):
         """将照片从一个类别移动到另一个类别"""
         if old_category in self.categories and new_category in self.categories:
             for photo in self.categories[old_category]:
-                if photo.path == photo_path:
+                if photo.caption == photo_caption:
                     self.categories[old_category].remove(photo)
                     photo.category = new_category
                     self.categories[new_category].append(photo)
-                    print(f"照片 {photo_path} 已从类别 {old_category} 移动到类别 {new_category}")
+                    print(f"照片 {photo_caption} 已从类别 {old_category} 移动到类别 {new_category}")
                     return
-            print(f"类别 {old_category} 中不存在照片 {photo_path}")
+            print(f"类别 {old_category} 中不存在照片 {photo_caption}")
         else:
             print(f"照片类别 {old_category} 或 {new_category} 不存在.")
 
@@ -114,16 +124,16 @@ class PhotoAlbum:
                 for photo in photos:
                     print(photo)
 
-    def view_photo(self, category_name, photo_path):
+    def view_photo(self, category_name, photo_caption):
         """使用默认图片查看器程序展示指定类别的照片"""
         if category_name in self.categories:
             photos = self.categories[category_name]
             for photo in photos:
-                if photo.path == photo_path:
+                if photo.caption == photo_caption:
                     webbrowser.open(photo.path)
-                    print(f"正在使用默认图片查看器程序打开照片: {photo.path}")
+                    print(f"正在使用默认图片查看器程序打开照片: {photo.caption}")
                     return
-            print(f"类别 {category_name} 中不存在照片 {photo_path}")
+            print(f"类别 {category_name} 中不存在照片 {photo_caption}")
         else:
             print(f"照片类别 {category_name} 不存在.")
 
