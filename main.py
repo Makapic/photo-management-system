@@ -2,12 +2,15 @@ import os
 from datetime import datetime
 import webbrowser
 import json
+
+
 class Photo:
-    def __init__(self, path, category, caption=None):
+    def __init__(self, path, category, caption="", note=""):
         self.path = path
         self.category = category
         self.caption = caption
         self.upload_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.note = note
 
     def __str__(self):
         return f"Photo: {self.path} | Category: {self.category} | Caption: {self.caption} | Uploaded: {self.upload_time}"
@@ -18,7 +21,8 @@ class Photo:
             "path": self.path,
             "category": self.category,
             "caption": self.caption,
-            "upload_time": self.upload_time
+            "upload_time": self.upload_time,
+            "note": self.note
         }
 
     @classmethod
@@ -27,8 +31,11 @@ class Photo:
         return cls(
             data["path"],
             data["category"],
-            data["caption"]
+            data["caption"],
+            data["note"]
         )
+
+
 class PhotoAlbum:
     def __init__(self):
         self.categories = {}
@@ -136,6 +143,31 @@ class PhotoAlbum:
             print(f"类别 {category_name} 中不存在照片 {photo_caption}")
         else:
             print(f"照片类别 {category_name} 不存在.")
+
+    def get_note(self, category_name, photo_caption):
+        """查询注释"""
+        if category_name in self.categories:
+            photos = self.categories[category_name]
+            for photo in photos:
+                if photo.caption == photo_caption:
+                    return photo.note
+            print(f"类别 {category_name} 中不存在照片 {photo_caption}")
+            return ""
+        else:
+            print(f"照片类别 {category_name} 不存在.")
+            return ""
+
+    def save_note(self, category_name, photo_caption, note):
+        """保存注释"""
+        if category_name in self.categories:
+            photos = self.categories[category_name]
+            for photo in photos:
+                if photo.caption == photo_caption:
+                    photo.note = note
+            print(f"类别 {category_name} 中不存在照片 {photo_caption}")
+        else:
+            print(f"照片类别 {category_name} 不存在.")
+
 
 # 交互式演示
 photo_album = PhotoAlbum()
