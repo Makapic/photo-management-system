@@ -1,0 +1,51 @@
+{% extends 'admin/index.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}类别管理{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {{ render_breadcrumb_item('admin.index', 'Dashboard') }}
+            {{ render_breadcrumb_item('admin.manage_tag', '类别管理') }}
+        </ol>
+    </nav>
+    <div class="page-header">
+        <h1>所有类别
+            <small class="text-muted">{{ pagination.total }}</small>
+        </h1>
+    </div>
+    {% if tags %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>类别名</th>
+                <th>创建者</th>
+                <th>照片数</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            {% for tag in tags %}
+                <tr>
+                    <td>{{ tag.id }}</td>
+                    <td>{{ tag.name }}</td>
+                    <td>
+                        <a href="{{ url_for('user.index', username=tag.author.username) }}">{{ tag.author.name }}</a>
+                    </td>
+                    <td><a href="{{ url_for('main.show_tag', tag_id=tag.id) }}">{{ tag.photos|length }}</a></td>
+                    <td>
+                        <form class="inline" action="{{ url_for('admin.delete_tag', tag_id=tag.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="submit" onclick="return confirm('确定删除？');"
+                                   class="btn btn-danger btn-sm" value="删除">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="page-footer">{{ render_pagination(pagination) }}</div>
+    {% else %}
+        <div class="tip"><h5>无类别。</h5></div>
+    {% endif %}
+{% endblock %}

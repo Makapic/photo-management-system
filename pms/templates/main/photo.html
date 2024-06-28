@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+
+{% block title %}{{ photo.author.name }}的照片{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="photo">
+                <a href="{{ url_for('.get_image', filename=photo.filename) }}" target="_blank">
+                    <img class="img-fluid" src="{{ url_for('.get_image', filename=photo.filename_m) }}">
+                </a>
+            </div>
+            {% if current_user == photo.author or current_user.can('MODERATE') %}
+                <a class="btn btn-danger btn-sm text-white" data-toggle="modal" data-target="#confirm-delete"
+                   data-href="{{ url_for('.delete_photo', photo_id=photo.id) }}">删除</a>
+            {% endif %}
+            <p class="text-muted float-right small">
+                <span class="oi oi-clock"></span> 上传于{{ moment(photo.timestamp).format('LLL') }}
+            </p>
+        </div>
+        <div class="col-md-4">
+            {% include 'main/_photo_sidebar.html' %}
+        </div>
+    </div>
+    {% if current_user.is_authenticated %}
+        <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">删除图片</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>确认删除?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form class="delete-form" action="" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button class="btn btn-danger btn-confirm" type="submit">删除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

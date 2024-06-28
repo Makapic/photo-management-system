@@ -1,0 +1,7 @@
+{{ user.username }}，您好！
+
+您正在修改PMS图像管理系统中绑定的邮箱，请点击下面链接完成修改：
+
+    {{ url_for('user.change_email', token=token, _external=True) }}
+
+请不要向此邮箱回复邮件，谢谢。

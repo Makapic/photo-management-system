@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import photo_card %}
+
+{% block title %}{{ user.name }}的照片{% endblock %}
+
+{% block content %}
+    {% include 'user/_header.html' %}
+    <div id="masonry" class="grid">
+            {% if photos %}
+                {% for photo in photos %}
+                    <div class="photo-card card">
+                        <div class="card-header">
+                            {% if photo.tags %}
+                                {% for tag in photo.tags %}
+                                    <a class="badge badge-light"
+                                    href="{{ url_for('main.show_tag', tag_id=tag.id) }}" target="_blank"><span
+                                    class="oi oi-tag"></span> {{ tag.name }}</a>
+                                {% endfor %}
+                            {% endif %}
+                            <span class="float-right">
+                                <small data-toggle="tooltip" data-placement="top"
+                                       data-timestamp="{{ photo.timestamp }}" data-delay="500">
+                                {{ moment(photo.timestamp).fromNow(refresh=True) }}</small></span>
+                        </div>
+                        <a class="" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">
+                            <img class="card-img-top portrait" src="{{ url_for('main.get_image', filename=photo.filename_s)  }}">
+                        </a>
+                        <div class="card-footer">
+                            {% if photo.description %}
+                                <p class="card-text">{{ photo.description }}</p>
+                            {% else %}
+                                <p class="card-text"><small class="text-muted">暂无注释。</small></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="tip text-center">
+                    <h3>没有照片。</h3>
+                    {% if user == current_user %}
+                        <a class="btn btn-link" href="{{ url_for('main.upload') }}">去上传</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+    </div>
+{% endblock %}

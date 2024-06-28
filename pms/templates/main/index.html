@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'macros.html' import photo_card with context %}
+
+{% block title %}PMS{% endblock %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+    <div class="row justify-content-md-center">
+        <div class="col-md-8">
+            {% if photos %}
+                {% for photo in photos %}
+                    <div class="card mb-3 w-100 bg-light">
+                        <div class="card-header">
+                            {% if photo.tags %}
+                                {% for tag in photo.tags %}
+                                    <a class="badge badge-light"
+                                    href="{{ url_for('.show_tag', tag_id=tag.id) }}" target="_blank"><span
+                                    class="oi oi-tag"></span> {{ tag.name }}</a>
+                                {% endfor %}
+                            {% endif %}
+                            <span class="float-right">
+                <small data-toggle="tooltip" data-placement="top" data-timestamp="{{ photo.timestamp }}"
+                       data-delay="500">
+                    {{ moment(photo.timestamp).fromNow(refresh=True) }}</small></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="" align="center">
+                                <a class="thumbnail" href="{{ url_for('.show_photo', photo_id=photo.id) }}"
+                                   target="_blank">
+                                    <img class="img-fluid"
+                                         src="{{ url_for('.get_image', filename=photo.filename_m) }}">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            {% if photo.description %}
+                                <p class="card-text">{{ photo.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="tip text-center">
+                    <h3>暂无图像</h3>
+                    <a class="btn btn-link" href="{{ url_for('main.upload') }}">去上传</a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% include 'main/_sidebar.html' %}
+        </div>
+    </div>
+    {% if photos %}
+        {{ render_pagination(pagination, align='center') }}
+    {% endif %}
+{% else %}
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-8">
+                <img src="{{ url_for('static', filename='images/work.jpg') }}" class="rounded img-fluid">
+            </div>
+            <div class="col-md-4 align-self-center">
+                <h1>图像管理系统PMS</h1>
+                <p>软件工程实践项目</p>
+                <p><a class="btn btn-outline-primary" href="{{ url_for('auth.login') }}">登录</a>&nbsp;&nbsp;
+                    <a class="btn btn-primary" href="{{ url_for('auth.register') }}">立即注册！</a></p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
